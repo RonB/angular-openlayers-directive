@@ -424,10 +424,8 @@ angular.module('openlayers-directive').factory('olHelpers', function($q, $log, $
                 }
 
                 if (isDefined(source.url)) {
-                    oSource = new ol.source.Vector({
-                        format: new ol.format.GeoJSON(),
-                        url: source.url
-                    });
+                    source.format = new ol.format.GeoJSON();
+                    oSource = new ol.source.Vector(source);
                 } else {
                     oSource = new ol.source.Vector();
 
