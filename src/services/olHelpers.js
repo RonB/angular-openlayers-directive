@@ -422,7 +422,7 @@ angular.module('openlayers-directive').factory('olHelpers', function($q, $log, $
                                'property to add a GeoJSON layer.');
                     return;
                 }
-
+ 
                 if (isDefined(source.url)) {
                     source.format = new ol.format.GeoJSON();
                     oSource = new ol.source.Vector(source);
