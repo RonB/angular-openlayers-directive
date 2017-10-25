@@ -424,6 +424,7 @@ angular.module('openlayers-directive').factory('olHelpers', function($q, $log, $
                 }
 
                 if (isDefined(source.url)) {
+                    // support all source parameters to enable loading strategy and other parameters
                     source.format = new ol.format.GeoJSON();
                     oSource = new ol.source.Vector(source);
                 } else {
