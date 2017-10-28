@@ -425,6 +425,8 @@ angular.module('openlayers-directive').factory('olHelpers', function($q, $log, $
 
                 if (isDefined(source.url)) {
                     // support all source parameters to enable loading strategy and other parameters
+                    // this enables a loading strategy like bbox.
+                    // This is needed for WFS layers
                     source.format = new ol.format.GeoJSON();
                     oSource = new ol.source.Vector(source);
                 } else {
