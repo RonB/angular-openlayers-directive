@@ -20,3 +20,11 @@ before_script:
   - npm prune
 after_success:
   - npm run semantic-release
+deploy:
+  provider: releases
+  api_key:
+    secure: 42e97118e7eefc236fc07997d0d085e19b03eeb0
+  file: "*.tar.gz"
+  skip_cleanup: true
+  on:
+    tags: true
