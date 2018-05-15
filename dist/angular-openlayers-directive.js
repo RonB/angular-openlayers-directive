@@ -94,6 +94,8 @@ angular.module('openlayers-directive', ['ngSanitize']).directive('openlayers', [
 
                 scope.$on('$destroy', function() {
                     olData.resetMap(attrs.id);
+                    map.setTarget(null);
+                    map = null;
                 });
 
                 // If no layer is defined, set the default tileLayer
@@ -314,7 +316,7 @@ angular.module('openlayers-directive').directive('olCenter', ["$log", "$location
                 });
 
                 olScope.$on('$destroy', function() {
-                    map.unByKey(moveEndEventKey);
+                    ol.Observable.unByKey(moveEndEventKey);
                 });
             });
         }
@@ -661,7 +663,7 @@ angular.module('openlayers-directive').directive('olView', ["$log", "$q", "olDat
                 });
 
                 olScope.$on('$destroy', function() {
-                    map.unByKey(rotationEventKey);
+                    ol.Observable.unByKey(rotationEventKey);
                 });
 
             });
@@ -1646,7 +1648,7 @@ angular.module('openlayers-directive').factory('olHelpers', ["$q", "$log", "$htt
                     return;
                 }
 
-                var _urlBase = 'http://services.arcgisonline.com/ArcGIS/rest/services/';
+                var _urlBase = 'https://services.arcgisonline.com/ArcGIS/rest/services/';
                 var _url = _urlBase + source.layer + '/MapServer/tile/{z}/{y}/{x}';
 
                 oSource = new ol.source.XYZ({
@@ -1681,6 +1683,8 @@ angular.module('openlayers-directive').factory('olHelpers', ["$q", "$log", "$htt
 
                 if (isDefined(source.url)) {
                     // support all source parameters to enable loading strategy and other parameters
+                    // this enables a loading strategy like bbox.
+                    // This is needed for WFS layers
                     source.format = new ol.format.GeoJSON();
                     oSource = new ol.source.Vector(source);
                 } else {
@@ -1887,11 +1891,12 @@ angular.module('openlayers-directive').factory('olHelpers', ["$q", "$log", "$htt
                 });
                 break;
             case 'XYZ':
-                if (!source.url && !source.tileUrlFunction) {
-                    $log.error('[AngularJS - Openlayers] - XYZ Layer needs valid url or tileUrlFunction properties');
+                if (!source.url && !source.urls && !source.tileUrlFunction) {
+                    $log.error('[AngularJS - Openlayers] - XYZ Layer needs valid url(s) or tileUrlFunction properties');
                 }
                 oSource = new ol.source.XYZ({
                     url: source.url,
+                    urls: source.urls,
                     attributions: createAttribution(source),
                     minZoom: source.minZoom,
                     maxZoom: source.maxZoom,
@@ -2121,11 +2126,10 @@ angular.module('openlayers-directive').factory('olHelpers', ["$q", "$log", "$htt
         setCenter: function(view, projection, newCenter, map) {
 
             if (map && view.getCenter()) {
-                var pan = ol.animation.pan({
+                view.animate({
                     duration: 150,
-                    source: (view.getCenter())
+                    center: view.getCenter()
                 });
-                map.beforeRender(pan);
             }
 
             if (newCenter.projection === projection) {
@@ -2137,11 +2141,11 @@ angular.module('openlayers-directive').factory('olHelpers', ["$q", "$log", "$htt
         },
 
         setZoom: function(view, zoom, map) {
-            var z = ol.animation.zoom({
+            view.animate({
                 duration: 150,
-                resolution: map.getView().getResolution()
+                resolution: map.getView().getResolution(),
+                zoom: zoom
             });
-            map.beforeRender(z);
             view.setZoom(zoom);
         },
 
