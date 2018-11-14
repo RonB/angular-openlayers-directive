@@ -1,6 +1,7 @@
 {
     "name": "angular-openlayers-directive",
     "author": "David Rubert <a@a.com>",
+    "version": "1.21.0",
     "contributors": ["Juri Strumpflohner <juri.strumpflohner@gmail.com>"],
     "description":
         "angular-openlayers-directive - An AngularJS directive to easily interact with Openlayers maps",
